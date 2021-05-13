@@ -2,18 +2,18 @@
 @inherits RadzenComponent
 @if (Visible)
 {
-    <li @attributes="Attributes" class="@GetCssClass()" style="@Style" @onclick="@OnClick" @onclick:stopPropagation>
-        <div class="rz-navigation-item-wrapper" onclick="Radzen.toggleMenuItem(this)">
+    <li @attributes="Attributes" class="@GetCssClass()" style="@Style" @onclick="@OnClick" @onclick:stopPropagation id="@GetId()" @ref=Element>
+        <div class="rz-navigation-item-wrapper" @attributes="@Events">
             @if (!string.IsNullOrEmpty(Path))
             {
                 <NavLink target="@Target" class="rz-navigation-item-link" href="@Path">
                     @if (!string.IsNullOrEmpty(Icon))
                     {
-                        <i class="rzi rz-navigation-item-icon">@((MarkupString)Icon)</i>
+                        <i class="rzi rz-navigation-item-icon">@((MarkupString) Icon)</i>
                     }
                     @if (!string.IsNullOrEmpty(Image))
                     {
-                        <img class="rz-navigation-item-icon" src="@Image" />
+                        <img class="rz-navigation-item-icon" src="@Image"/>
                     }
                     @if(Template != null)
                     {
@@ -34,11 +34,11 @@
                 <div class="rz-navigation-item-link">
                     @if (!string.IsNullOrEmpty(Icon))
                     {
-                        <i class="rzi rz-navigation-item-icon">@((MarkupString)Icon)</i>
+                        <i class="rzi rz-navigation-item-icon">@((MarkupString) Icon)</i>
                     }
                     @if (!string.IsNullOrEmpty(Image))
                     {
-                        <img class="rz-navigation-item-icon" src="@Image" />
+                        <img class="rz-navigation-item-icon" src="@Image"/>
                     }
                     @if(Template != null)
                     {
@@ -63,7 +63,9 @@
         }
     </li>
 }
+
 @code {
+
     protected override string GetComponentCssClass()
     {
         return "rz-navigation-item";
@@ -88,6 +90,9 @@
     public string Image { get; set; }
 
     [Parameter]
+    public bool Hover { get; set; }
+
+    [Parameter]
     public RenderFragment Template { get; set; }
 
     [Parameter]
@@ -96,11 +101,28 @@
     [CascadingParameter]
     public RadzenMenu Parent { get; set; }
 
+    private Dictionary<string, object> Events { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Events = new Dictionary<string, object>();
+        if (Hover)
+        {
+            Events.Add("onmouseenter", "Radzen.toggleMenuItem(this)");
+        }
+        else
+        {
+            Events.Add("onclick", "Radzen.toggleMenuItem(this)");
+        }
+        base.OnInitialized();
+    }
+
     public async System.Threading.Tasks.Task OnClick(MouseEventArgs args)
     {
         if (Parent != null)
         {
-            await Parent.Click.InvokeAsync(new MenuItemEventArgs() { Text = this.Text, Path = this.Path, Value = this.Value });
+            await Parent.Click.InvokeAsync(new MenuItemEventArgs() {Text = this.Text, Path = this.Path, Value = this.Value});
         }
     }
+
 }

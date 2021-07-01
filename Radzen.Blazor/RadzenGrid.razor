@@ -878,7 +878,7 @@
         return Task.CompletedTask;
     }
 
-    Dictionary<TItem, bool> expandedItems = new Dictionary<TItem, bool>();
+    public Dictionary<TItem, bool> expandedItems = new Dictionary<TItem, bool>();
     protected string ExpandedItemStyle(TItem item)
     {
         return expandedItems.Keys.Contains(item) ? "rz-row-toggler rzi-grid-sort  rzi-chevron-circle-down" : "rz-row-toggler rzi-grid-sort  rzi-chevron-circle-right";

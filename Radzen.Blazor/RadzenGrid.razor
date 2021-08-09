@@ -39,7 +39,7 @@
                             }
                         </colgroup>
                         <thead class="rz-datatable-thead">
-                            <tr class="">
+                            <tr class="" >
                                 @if (Template != null)
                                 {
                                     <th class="rz-col-icon  rz-unselectable-text" scope="col">
@@ -50,7 +50,8 @@
                                 @foreach (var column in visibleColumns)
                                 {
                                     var sortableClass = AllowSorting && column.Sortable ? "rz-sortable-column" : "";
-                                    <th class="@($" rz-unselectable-text {sortableClass} {column.HeaderCssClass}")" scope="col" style="@column.GetStyle(true)">
+                                    <th class="@($" rz-unselectable-text {sortableClass} {column.HeaderCssClass}")" scope="col" style="@column.GetStyle(true)" 
+                                        ondragover="event.preventDefault()" @ondrop="@((args) => OnChildDrop(args, column))" draggable="true" @ondragstart="@(args => OnDragStart(column))" @ondragend="@(args => OnDragEnd(column))">
                                         <div @onclick='@((args) => OnSort(args, column))' style="width:100%">
                                             <span class="rz-column-title">
                                                 @if (column.HeaderTemplate != null)
@@ -656,6 +657,9 @@
 
     [Parameter]
     public bool AllowColumnResize { get; set; }
+    
+    [Parameter]
+    public bool AllowColumnDrag { get; set; }
 
     string getColumnResizerId(int columnIndex)
     {
@@ -681,6 +685,9 @@
 
     [Parameter]
     public EventCallback<ColumnResizedEventArgs<TItem>> ColumnResized { get; set; }
+    
+    [Parameter]
+    public EventCallback<IReadOnlyCollection<RadzenGridColumn<TItem>>> ColumnsReOrdered { get; set; }
 
     public override IQueryable<TItem> View
     {
@@ -1377,4 +1384,33 @@
             JSRuntime.InvokeVoidAsync("Radzen.destroyPopup", $"{PopupID}{column.GetFilterProperty()}");
         }
     }
+
+    private RadzenGridColumn<TItem> _columnOnDrag;
+    private void OnDragStart(RadzenGridColumn<TItem> column)
+    {
+        _columnOnDrag = column;
+    }
+
+    private void OnChildDrop(DragEventArgs obj, RadzenGridColumn<TItem> column)
+    {
+        if (_columnOnDrag is null) return;
+        
+        var oldIndex = columns.IndexOf(_columnOnDrag);
+        var newIndex = columns.IndexOf(column);
+
+        if (oldIndex <= -1) return;
+        
+        columns.RemoveAt(oldIndex);
+        columns.Insert(newIndex, _columnOnDrag);
+        
+        ColumnsReOrdered.InvokeAsync(columns);
+        
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnDragEnd(RadzenGridColumn<TItem> column)
+    {
+        _columnOnDrag = null;
+    }
+
 }

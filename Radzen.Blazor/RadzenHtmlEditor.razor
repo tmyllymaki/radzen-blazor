@@ -102,6 +102,11 @@
     {
         await Change.InvokeAsync(Html);
         await ValueChanged.InvokeAsync(Html);
+        
+        if (FieldIdentifier.FieldName != null)
+        {
+            EditContext?.NotifyFieldChanged(FieldIdentifier);
+        }
     }
 
     internal async Task OnExecuteAsync(string name)

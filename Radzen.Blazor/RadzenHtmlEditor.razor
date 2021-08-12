@@ -4,49 +4,49 @@
 @using Microsoft.JSInterop
 @inherits FormComponent<string>
 
-@if(Visible)
+@if (Visible)
 {
     <div @ref=Element style=@Style @attributes=@Attributes class=@GetCssClass() id=@GetId()>
         <div class="rz-html-editor-toolbar">
             <CascadingValue Value=@this>
-            @if (ChildContent != null)
-            {
-                @ChildContent
-            }
-            else
-            {
-                <RadzenHtmlEditorUndo />
-                <RadzenHtmlEditorRedo />
-                <RadzenHtmlEditorSeparator />
-                <RadzenHtmlEditorBold />
-                <RadzenHtmlEditorItalic />
-                <RadzenHtmlEditorUnderline />
-                <RadzenHtmlEditorStrikeThrough />
-                <RadzenHtmlEditorSeparator />
-                <RadzenHtmlEditorAlignLeft />
-                <RadzenHtmlEditorAlignCenter />
-                <RadzenHtmlEditorAlignRight />
-                <RadzenHtmlEditorJustify />
-                <RadzenHtmlEditorSeparator />
-                <RadzenHtmlEditorIndent />
-                <RadzenHtmlEditorOutdent />
-                <RadzenHtmlEditorUnorderedList />
-                <RadzenHtmlEditorOrderedList />
-                <RadzenHtmlEditorSeparator />
-                <RadzenHtmlEditorColor />
-                <RadzenHtmlEditorBackground />
-                <RadzenHtmlEditorRemoveFormat />
-                <RadzenHtmlEditorSeparator />
-                <RadzenHtmlEditorSubscript />
-                <RadzenHtmlEditorSuperscript />
-                <RadzenHtmlEditorSeparator />
-                <RadzenHtmlEditorLink />
-                <RadzenHtmlEditorUnlink />
-                <RadzenHtmlEditorImage />
-                <RadzenHtmlEditorFontName />
-                <RadzenHtmlEditorFontSize />
-                <RadzenHtmlEditorFormatBlock />
-            }
+                @if (ChildContent != null)
+                {
+                    @ChildContent
+                }
+                else
+                {
+                    <RadzenHtmlEditorUndo/>
+                    <RadzenHtmlEditorRedo/>
+                    <RadzenHtmlEditorSeparator/>
+                    <RadzenHtmlEditorBold/>
+                    <RadzenHtmlEditorItalic/>
+                    <RadzenHtmlEditorUnderline/>
+                    <RadzenHtmlEditorStrikeThrough/>
+                    <RadzenHtmlEditorSeparator/>
+                    <RadzenHtmlEditorAlignLeft/>
+                    <RadzenHtmlEditorAlignCenter/>
+                    <RadzenHtmlEditorAlignRight/>
+                    <RadzenHtmlEditorJustify/>
+                    <RadzenHtmlEditorSeparator/>
+                    <RadzenHtmlEditorIndent/>
+                    <RadzenHtmlEditorOutdent/>
+                    <RadzenHtmlEditorUnorderedList/>
+                    <RadzenHtmlEditorOrderedList/>
+                    <RadzenHtmlEditorSeparator/>
+                    <RadzenHtmlEditorColor/>
+                    <RadzenHtmlEditorBackground/>
+                    <RadzenHtmlEditorRemoveFormat/>
+                    <RadzenHtmlEditorSeparator/>
+                    <RadzenHtmlEditorSubscript/>
+                    <RadzenHtmlEditorSuperscript/>
+                    <RadzenHtmlEditorSeparator/>
+                    <RadzenHtmlEditorLink/>
+                    <RadzenHtmlEditorUnlink/>
+                    <RadzenHtmlEditorImage/>
+                    <RadzenHtmlEditorFontName/>
+                    <RadzenHtmlEditorFontSize/>
+                    <RadzenHtmlEditorFormatBlock/>
+                }
             </CascadingValue>
         </div>
         <div @ref=@ContentEditable class="rz-html-editor-content" contenteditable=@(!Disabled) @onfocus=@OnFocus @onblur=@OnBlur></div>
@@ -54,6 +54,7 @@
 }
 
 @code {
+
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
@@ -111,7 +112,10 @@
 
     internal async Task OnExecuteAsync(string name)
     {
-        await Execute.InvokeAsync(new HtmlEditorExecuteEventArgs(this) { CommandName = name });
+        await Execute.InvokeAsync(new HtmlEditorExecuteEventArgs(this)
+        {
+            CommandName = name
+        });
 
         StateHasChanged();
     }
@@ -186,7 +190,10 @@
     [JSInvokable]
     public async Task<string> OnPaste(string html)
     {
-        var args = new HtmlEditorPasteEventArgs { Html = html };
+        var args = new HtmlEditorPasteEventArgs
+        {
+            Html = html
+        };
 
         await Paste.InvokeAsync(args);
 
@@ -226,4 +233,5 @@
             JSRuntime.InvokeVoidAsync("Radzen.destroyEditor", ContentEditable);
         }
     }
+
 }

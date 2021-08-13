@@ -8,7 +8,7 @@
     <IsPackable>true</IsPackable>
     <PackageId>Radzen.Blazor.Oiwa</PackageId>
     <Product>Radzen.Blazor.Oiwa</Product>
-    <Version>3.8.2</Version>
+    <Version>3.8.6</Version>
     <Copyright>Radzen Ltd.</Copyright>
     <Authors>Radzen Ltd.</Authors>
     <Description>Native Blazor UI components by Radzen Ltd.</Description>

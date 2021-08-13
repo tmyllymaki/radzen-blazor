@@ -51,7 +51,7 @@
                                 {
                                     var sortableClass = AllowSorting && column.Sortable ? "rz-sortable-column" : "";
                                     <th class="@($" rz-unselectable-text {sortableClass} {column.HeaderCssClass}")" scope="col" style="@column.GetStyle(true)" 
-                                        ondragover="event.preventDefault()" @ondrop="@((args) => OnChildDrop(args, column))" draggable="true" @ondragstart="@(args => OnDragStart(column))" @ondragend="@(args => OnDragEnd(column))">
+                                        ondragover="event.preventDefault()" @ondrop="@((args) => OnChildDrop(args, column))" draggable="@AllowColumnDrag.ToString()" @ondragstart="@(args => OnDragStart(column))" @ondragend="@(args => OnDragEnd(column))">
                                         <div @onclick='@((args) => OnSort(args, column))' style="width:100%">
                                             <span class="rz-column-title">
                                                 @if (column.HeaderTemplate != null)
@@ -666,8 +666,11 @@
         return string.Join("", $"{UniqueID}".Split('.')) + columnIndex;
     }
 
+    bool _canDrag;
     async Task StartColumnResize(MouseEventArgs args, int columnIndex)
     {
+        _canDrag = AllowColumnDrag;
+        AllowColumnDrag = false;
         await JSRuntime.InvokeVoidAsync("Radzen.startColumnResize", getColumnResizerId(columnIndex), Reference, columnIndex, args.ClientX);
     }
 
@@ -681,6 +684,8 @@
             Column = column,
             Width = value,
         });
+        
+        AllowColumnDrag = _canDrag;
     }
 
     [Parameter]
